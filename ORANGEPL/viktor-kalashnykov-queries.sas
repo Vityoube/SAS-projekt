@@ -1,20 +1,15 @@
-
-ods title "Srednie notowania za rok 2008";
-
-proc means data=GPW.ORANGEPL2008;
-by rok miesiac;
-var Zamkniecie;
-run;
 libname GPW 'C:\ORANGEPL\GPW';
 run;
 
-proc import out=GPW.SP
+proc import out=GPW.SP 
 file='C:\ORANGEPL\GPW\ORANGEPL.xls' 
 dbms=xls 
 replace;
-run; 
+run;
+
 data GPW.ORANGEPL; 
-set GPW.SP(keep=Data Zamkniecie ) ; 
+set GPW.SP(keep=Data Zamkniecie) ; 
+
 tydzien=week(input(Data,yymmdd10.));
 miesiac=month(input(Data,yymmdd10.));
 rok=year(input(Data,yymmdd10.)); 
@@ -40,22 +35,18 @@ data GPW.ORANGEPL2012;
     set GPW.ORANGEPL();
     where rok=2012;
 run;
-
 data GPW.ORANGEPL2013;
     set GPW.ORANGEPL();
     where rok=2013;
 run;
-
 data GPW.ORANGEPL2014;
     set GPW.ORANGEPL();
     where rok=2014;
 run;
-
 data GPW.ORANGEPL2015;
     set GPW.ORANGEPL();
     where rok=2015;
 run;
-
 data GPW.ORANGEPL2016;
     set GPW.ORANGEPL();
     where rok=2016;
@@ -65,10 +56,10 @@ proc export data=GPW.SP
 outtable="Sheet0"
 dbms=access
 replace;
-database="C:\ORANGEPL\GPW1\ORANGEPL.mdb";
+database="C:\ORANGEPL\GPW1\ORANGEPL .mdb";
 run;
-
-libname GPW1 access 'C:\ORANGEPL\GPW1\ORANGEPL.mdb';
+libname GPW1 access
+'C:\ORANGEPL\GPW1\ORANGEPL.mdb';
 run;
 
 data GPW1.zbior0;
@@ -103,42 +94,34 @@ proc export data=GPW.ORANGEPL2008
 file='C:\ORANGEPL\GPW\ORANGEPL2008.xls'
 dbms=tab replace;
 run;
-
 proc export data=GPW.ORANGEPL2009
 file='C:\ORANGEPL\GPW\ORANGEPL2009.xls'
 dbms=tab replace;
 run;
-
 proc export data=GPW.ORANGEPL2010
 file='C:\ORANGEPL\GPW\ORANGEPL2010.xls'
 dbms=tab replace;
 run;
-
 proc export data=GPW.ORANGEPL2011
 file='C:\ORANGEPL\GPW\ORANGEPL2011.xls'
 dbms=tab replace;
 run;
-
 proc export data=GPW.ORANGEPL2012
 file='C:\ORANGEPL\GPW\ORANGEPL2012.xls'
 dbms=tab replace;
 run;
-
 proc export data=GPW.ORANGEPL2013
 file='C:\ORANGEPL\GPW\ORANGEPL2013.xls'
 dbms=tab replace;
 run;
-
 proc export data=GPW.ORANGEPL2014
 file='C:\ORANGEPL\GPW\ORANGEPL2014.xls'
 dbms=tab replace;
 run;
-
 proc export data=GPW.ORANGEPL2015
 file='C:\ORANGEPL\GPW\ORANGEPL2015.xls'
 dbms=tab replace;
 run;
-
 proc export data=GPW.ORANGEPL2016
 file='C:\ORANGEPL\GPW\ORANGEPL2016.xls'
 dbms=tab replace;
