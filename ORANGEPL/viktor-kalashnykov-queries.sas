@@ -510,11 +510,29 @@ var Zamkniecie;
 output out = GPW.SAS; 
 run;
 
+data GPW.dates;
+   date='27Apr2008'd;
+   do while(date<='24Apr2016'd);
+	   	output;
+		date=intnx('week',date,1);
+		format date date9.;
+	end;
+run;
+
 ods title "Ceny dzienne "; 
 proc means data=GPW.ORANGEPL; 
 by rok tydzien data;
 var Zamkniecie;
 output out = GPW.SAS1; 
+run;
+
+data GPW.dates1;
+   data='25Apr2008'd;
+   do while(data<='22Apr2016'd);
+	   	output;
+		data=intnx('day',data,1);
+		format data date9.;
+	end;
 run;
 
 data GPW.S; 
@@ -526,4 +544,18 @@ run;
 data GPW.S1; 
 set GPW.SAS1(keep=rok data Zamkniecie _STAT_) ; 
 where _STAT_='MEAN';
+run;
+
+options DataSTMTCHK=none;
+data GPW.SP;
+merge GPW.Dates1 GPW.S1;
+by data;
+ROW_NUM=_N_;
+run;
+
+options DataSTMTCHK=none;
+data GPW.SP;
+merge GPW.SP GPW.SP1;
+by data;
+ROW_NUM=_N_;
 run;
