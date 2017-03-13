@@ -486,20 +486,52 @@ var Zamkniecie;
 output out = GPW.SAS; 
 run;
 
+%let start_date=02Jan2008;
+%let end_date=30DEC2016;
+data GPW.dates;
+dataNum="&start_date"d;
+do while(dataNum<="&end_date"d);
+   	output;
+	dataNum=intnx('day',dataNum,1,'s');	
+end;
+format dataNum yymmdd10.;
+run;
+
+data GPW.dates;
+set GPW.dates;
+data=put(dataNum,yymmdd10.);
+drop dataNum;	
+run;
+
+options DATASTMTCHK=none;
+data GPW.sp_dates;
+merge GPW.dates GPW.sp (keep=Data Zamkniecie);
+by Data;
+run;
+
+data GPW.sp_dates;
+set GPW.sp_dates;
+retain previous;
+retain next;
+if not missing(Zamkniecie) then previous=Zamkniecie;
+do until (Zamkniecie ne .);
+ set GPW.sp_dates;
+end;
+if Zamkniecie ne . then next = Zamkniecie;
+do until (initial ne . or last.group);
+ set GPW.sp_dates;
+ initial = Zamkniecie;
+ if initial = . then Zamkniecie = (next+previous)/2;
+ output;
+end;
+drop initial next previous;
+run;
+
 ods title "Ceny tygodniowe "; 
 proc means data=GPW.ORANGEPL; 
 by rok tydzien;
 var Zamkniecie;
 output out = GPW.SAS; 
-run;
-
-data GPW.dates;
-   date='27Apr2008'd;
-   do while(date<='24Apr2016'd);
-	   	output;
-		date=intnx('week',date,1);
-		format date date9.;
-	end;
 run;
 
 ods title "Ceny dzienne "; 
@@ -509,36 +541,4 @@ var Zamkniecie;
 output out = GPW.SAS1; 
 run;
 
-data GPW.dates1;
-   data='25Apr2008'd;
-   do while(data<='22Apr2016'd);
-	   	output;
-		data=intnx('day',data,1);
-		format data date9.;
-	end;
-run;
 
-data GPW.S; 
-set GPW.SAS(keep=rok tydzien Zamkniecie _STAT_) ; 
-where _STAT_='MEAN';
-set GPW.dates;
-run;
-
-data GPW.S1; 
-set GPW.SAS1(keep=rok data Zamkniecie _STAT_) ; 
-where _STAT_='MEAN';
-run;
-
-options DataSTMTCHK=none;
-data GPW.SP;
-merge GPW.Dates1 GPW.S1;
-by data;
-ROW_NUM=_N_;
-run;
-
-options DataSTMTCHK=none;
-data GPW.SP;
-merge GPW.SP GPW.SP1;
-by data;
-ROW_NUM=_N_;
-run;
